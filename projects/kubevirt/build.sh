@@ -1,3 +1,4 @@
+#!/bin/bash -eu
 # Copyright 2024 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,9 +15,17 @@
 #
 ################################################################################
 
-FROM gcr.io/oss-fuzz-base/base-builder-rust
+cd "$SRC"/go-118-fuzz-build
+go build .
+mv go-118-fuzz-build /root/go/bin/
+cd "$SRC"/kubevirt
 
-RUN rustup toolchain install nightly-2024-10-29
-RUN git clone --depth 1 https://github.com/typst/typst.git typst
-WORKDIR typst
-COPY build.sh $SRC/
+printf "package webhooks\nimport _ \"github.com/AdamKorcz/go-118-fuzz-build/testing\"\n" > pkg/util/webhooks/register_fuzz_dep.go
+go mod tidy
+go mod vendor
+go mod edit -replace github.com/AdamKorcz/go-118-fuzz-build="$SRC"/go-118-fuzz-build
+go mod tidy
+go mod vendor
+
+mv $SRC/fuzz_test.go ./pkg/certificates/triple/cert/
+compile_native_go_fuzzer kubevirt.io/kubevirt/pkg/certificates/triple/cert FuzzKeyParsers FuzzKeyParsers
