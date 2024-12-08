@@ -14,9 +14,7 @@
 #
 ################################################################################
 
-FROM gcr.io/oss-fuzz-base/base-builder-rust
-
-RUN rustup toolchain install nightly-2024-10-29
-RUN git clone --depth 1 https://github.com/typst/typst.git typst
-WORKDIR typst
+FROM gcr.io/oss-fuzz-base/base-builder-go
+RUN git clone --depth 1 https://github.com/cloudflare/roughtime.git
 COPY build.sh $SRC/
+WORKDIR $SRC/roughtime
