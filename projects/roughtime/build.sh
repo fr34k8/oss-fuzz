@@ -1,3 +1,4 @@
+#!/bin/bash -eu
 # Copyright 2024 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,9 +15,7 @@
 #
 ################################################################################
 
-FROM gcr.io/oss-fuzz-base/base-builder-rust
+go get github.com/AdamKorcz/go-118-fuzz-build/testing
 
-RUN rustup toolchain install nightly-2024-10-29
-RUN git clone --depth 1 https://github.com/typst/typst.git typst
-WORKDIR typst
-COPY build.sh $SRC/
+compile_native_go_fuzzer   ./protocol  FuzzParseRequest     fuzz_parse_request
+compile_native_go_fuzzer   ./protocol  FuzzVerifyReply      fuzz_verify_reply
