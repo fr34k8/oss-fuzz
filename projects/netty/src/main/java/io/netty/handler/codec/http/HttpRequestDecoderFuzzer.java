@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-import org.apache.commons.compress.archivers.arj.ArjArchiveInputStream;
+package io.netty.handler.codec.http;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import com.code_intelligence.jazzer.api.FuzzedDataProvider;
+import io.netty.handler.HandlerFuzzerBase;
 
-public class ArchiverArjFuzzer extends BaseTests {
-    public static void fuzzerTestOneInput(byte[] data) {
-        try {
-            fuzzArchiveInputStream(new ArjArchiveInputStream(new ByteArrayInputStream(data)));
-        } catch (IOException ignored) {
-        }
+public class HttpRequestDecoderFuzzer extends HandlerFuzzerBase {
+    {
+        channel.pipeline().addLast(new HttpRequestDecoder());
+    }
+
+    public static void fuzzerTestOneInput(FuzzedDataProvider fuzzedDataProvider) {
+        new HttpRequestDecoderFuzzer().test(fuzzedDataProvider);
     }
 }

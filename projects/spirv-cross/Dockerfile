@@ -14,9 +14,14 @@
 #
 ################################################################################
 
-FROM gcr.io/oss-fuzz-base/base-builder-rust
+FROM gcr.io/oss-fuzz-base/base-builder
+RUN apt-get update &&  \
+  apt-get install -y build-essential autoconf automake libtool pkg-config make \
+                     cmake
 
-RUN rustup toolchain install nightly-2024-10-29
-RUN git clone --depth 1 https://github.com/typst/typst.git typst
-WORKDIR typst
-COPY build.sh $SRC/
+
+RUN git clone https://github.com/KhronosGroup/SPIRV-Cross spirv-cross
+WORKDIR $SRC/spirv-cross
+
+COPY *_fuzzer.cpp build.sh $SRC/
+

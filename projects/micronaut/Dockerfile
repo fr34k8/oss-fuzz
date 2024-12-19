@@ -14,9 +14,11 @@
 #
 ################################################################################
 
-FROM gcr.io/oss-fuzz-base/base-builder-rust
+FROM gcr.io/oss-fuzz-base/base-builder-jvm
 
-RUN rustup toolchain install nightly-2024-10-29
-RUN git clone --depth 1 https://github.com/typst/typst.git typst
-WORKDIR typst
-COPY build.sh $SRC/
+RUN apt-get update && apt-get install -y locales
+RUN locale-gen en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+RUN git clone --depth=1 https://github.com/micronaut-projects/micronaut-fuzzing.git
+RUN micronaut-fuzzing/oss-fuzz/checkout.sh
+RUN ln -s micronaut-fuzzing/oss-fuzz/build.sh .

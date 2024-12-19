@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,19 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-////////////////////////////////////////////////////////////////////////////////
 
-import org.apache.commons.compress.archivers.arj.ArjArchiveInputStream;
+package install
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import (
+	"testing"
+)
 
-public class ArchiverArjFuzzer extends BaseTests {
-    public static void fuzzerTestOneInput(byte[] data) {
-        try {
-            fuzzArchiveInputStream(new ArjArchiveInputStream(new ByteArrayInputStream(data)));
-        } catch (IOException ignored) {
-        }
-    }
+func FuzzLoadInstallStrategyFromBytes(f *testing.F) {
+	f.Fuzz(func(t *testing.T, data string) {
+		_, _ = loadInstallStrategyFromBytes(data)
+	})
 }

@@ -14,16 +14,22 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-import org.apache.commons.compress.archivers.dump.DumpArchiveInputStream;
+package io.netty.handler;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import com.code_intelligence.jazzer.api.FuzzedDataProvider;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.embedded.EmbeddedChannel;
 
-public class ArchiverDumpFuzzer extends BaseTests {
-    public static void fuzzerTestOneInput(byte[] data) {
-        try {
-            fuzzArchiveInputStream(new DumpArchiveInputStream(new ByteArrayInputStream(data)));
-        } catch (IOException ignored) {
-        }
+/**
+ * Base class for fuzzing the input of an inbound handler. Will report exceptions thrown by the handler.
+ */
+public abstract class HandlerFuzzerBase {
+    protected final EmbeddedChannel channel = new EmbeddedChannel();
+
+    public void test(FuzzedDataProvider provider) {
+        byte[] bytes = provider.consumeRemainingAsBytes();
+        channel.writeInbound(Unpooled.wrappedBuffer(bytes));
+        channel.finishAndReleaseAll();
+        channel.checkException();
     }
 }
